@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ember — Fine Dining Restaurant</title>
+<meta name="description" content="Ember — Where every flavor tells a story. Fine farm-to-table dining in the heart of the city."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   EMBER RESTAURANT
+   Warm cream/white · Terracotta · NO BLACK
+   Cormorant Garamond + Outfit + DM Mono
+═══════════════════════════════════════════ */
+:root{
+  --bg:     #FAF7F2;
+  --bg2:    #F3EDE3;
+  --bg3:    #EDE4D6;
+  --white:  #FFFFFF;
+  --dark:   #1F1A14;
+  --dark2:  #2E2519;
+  --stone:  #6B5C4E;
+  --stone2: #9C8B7C;
+  --stone3: #C4B8AC;
+  --accent: #C8440A;
+  --acc2:   #E0602A;
+  --acc3:   #F08050;
+  --sage:   #4A6741;
+  --sage2:  #6B8F62;
+  --gold:   #9A7040;
+  --border: rgba(31,26,20,.08);
+  --brd2:   rgba(31,26,20,.16);
+  --fh: 'Cormorant Garamond', Georgia, serif;
+  --fb: 'Outfit', system-ui, sans-serif;
+  --fm: 'DM Mono', monospace;
+  --sp: cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--dark);overflow-x:hidden;cursor:none}
+@media(hover:none){body{cursor:auto}}
+::selection{background:rgba(200,68,10,.18)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font-family:var(--fb);color:inherit;outline:none;background:none;border:none;cursor:pointer}
+img{display:block;max-width:100%}
+
+/* ── CURSOR ─────────────────────── */
+#cD,#cR{position:fixed;border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
+#cD{width:7px;height:7px;background:var(--accent);top:-99px;left:-99px;transition:width .18s,height .18s,background .2s}
+#cR{width:34px;height:34px;border:1.5px solid rgba(200,68,10,.4);top:-99px;left:-99px;transition:width .38s var(--sp),height .38s var(--sp),border-color .25s}
+body.cA #cD,body.cA #cR{top:0;left:0}
+body.cH #cR{width:52px;height:52px;border-color:var(--accent)}
+body.cH #cD{background:var(--acc2)}
+
+/* ── SCROLL PROGRESS ──────────────── */
+#sPr{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:8999;background:linear-gradient(90deg,var(--accent),var(--acc2),var(--acc3));transition:width .08s linear}
+
+/* ── REVEAL ANIMATIONS ──────────────── */
+.rv{opacity:0;transform:translateY(32px);transition:opacity .85s ease,transform .85s var(--sp)}
+.rv.on{opacity:1;transform:none}
+.rvL{opacity:0;transform:translateX(-36px);transition:opacity .78s ease,transform .78s var(--sp)}
+.rvL.on{opacity:1;transform:none}
+.rvR{opacity:0;transform:translateX(36px);transition:opacity .78s ease,transform .78s var(--sp)}
+.rvR.on{opacity:1;transform:none}
+.rvS{opacity:0;transform:scale(.96);transition:opacity .7s ease,transform .7s var(--sp)}
+.rvS.on{opacity:1;transform:none}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+.d4{transition-delay:.28s}.d5{transition-delay:.35s}.d6{transition-delay:.42s}
+
+/* ── BUTTONS ──────────────────────── */
+.bFill{display:inline-flex;align-items:center;gap:10px;font-family:var(--fb);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--white);background:var(--accent);padding:14px 34px;cursor:pointer;transition:background .25s,transform .3s var(--sp),box-shadow .3s;position:relative;overflow:hidden;border:none}
+.bFill::after{content:'';position:absolute;inset:0;background:var(--acc2);transform:translateX(-101%);transition:transform .4s var(--sp)}
+.bFill:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(200,68,10,.28)}
+.bFill:hover::after{transform:translateX(0)}
+.bFill>*{position:relative;z-index:1}
+.bLine{display:inline-flex;align-items:center;gap:10px;font-family:var(--fb);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--dark);border:1.5px solid var(--brd2);padding:14px 30px;cursor:pointer;transition:all .28s var(--sp)}
+.bLine:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.bDark{display:inline-flex;align-items:center;gap:10px;font-family:var(--fb);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--white);background:var(--dark2);padding:14px 34px;cursor:pointer;transition:background .25s,transform .28s var(--sp);border:none}
+.bDark:hover{background:var(--dark);transform:translateY(-2px)}
+
+/* ══════════════════════════════
+   NAVIGATION
+══════════════════════════════ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:26px 64px;display:flex;align-items:center;justify-content:space-between;transition:all .4s}
+#nav.scrolled{background:rgba(250,247,242,.97);backdrop-filter:blur(24px);padding:16px 64px;border-bottom:1px solid var(--border);box-shadow:0 2px 32px rgba(31,26,20,.05)}
+.nLogo{font-family:var(--fh);font-size:1.65rem;font-weight:700;color:var(--dark2);cursor:pointer;letter-spacing:-.01em}
+.nLogo em{font-style:italic;color:var(--accent)}
+.nLinks{list-style:none;display:flex;gap:2px}
+.nLinks a{font-family:var(--fm);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--stone);padding:8px 15px;transition:color .22s;position:relative}
+.nLinks a:hover,.nLinks a.on{color:var(--dark)}
+.nLinks a.on::after{content:'';position:absolute;bottom:4px;left:15px;right:15px;height:1.5px;background:var(--accent)}
+.nRight{display:flex;align-items:center;gap:12px}
+.nCTA{font-family:var(--fb);font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--white);background:var(--accent);padding:10px 24px;transition:background .22s,transform .22s}
+.nCTA:hover{background:var(--acc2);transform:translateY(-1px)}
+.nBurger{display:none;flex-direction:column;gap:5px;padding:4px;cursor:pointer}
+.nBurger span{display:block;width:22px;height:1.5px;background:var(--dark);border-radius:1px;transition:all .32s var(--sp)}
+.nBurger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.nBurger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nBurger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobileMenu{position:fixed;inset:0;z-index:800;background:rgba(250,247,242,.98);backdrop-filter:blur(32px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transform:translateY(-100%);transition:transform .55s var(--sp)}
+.mobileMenu.open{transform:translateY(0)}
+.mobileMenu a{font-family:var(--fh);font-size:clamp(2rem,5.5vw,3rem);font-weight:600;color:var(--stone2);padding:10px 40px;transition:color .2s}
+.mobileMenu a:hover{color:var(--dark2)}
+.mobileMenu .mCTA{margin-top:28px;font-family:var(--fb);font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--white);background:var(--accent);padding:13px 36px}
+@media(max-width:980px){#nav{padding:20px 28px}#nav.scrolled{padding:14px 28px}.nLinks,.nCTA{display:none}.nBurger{display:flex}}
+@media(min-width:981px){.mobileMenu{display:none!important}}
+
+/* ══════════════════════════════
+   01 · HERO
+══════════════════════════════ */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+/* Left — cream content panel */
+.hLeft{background:var(--bg);display:flex;flex-direction:column;justify-content:center;padding:140px 64px 80px;position:relative;z-index:2}
+.hLeft::after{content:'';position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--border) 30%,var(--brd2) 60%,transparent)}
+.hBadge{display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:28px}
+.hBadge::before{content:'';width:28px;height:1.5px;background:var(--accent)}
+.hTitle{font-family:var(--fh);font-size:clamp(3.8rem,6.5vw,7rem);font-weight:700;line-height:.95;letter-spacing:-.02em;color:var(--dark2);margin-bottom:26px}
+.hTitle .ti{display:block;font-style:italic;font-weight:400;color:var(--stone)}
+.hTitle .ta{display:block;color:var(--accent)}
+.hDesc{font-size:1.05rem;font-weight:300;color:var(--stone);line-height:1.9;max-width:440px;margin-bottom:44px}
+.hBtns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:64px}
+.hStats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.hStat{background:var(--bg2);padding:18px 16px;border:1px solid var(--border);transition:border-color .28s,transform .3s var(--sp);cursor:default;position:relative;overflow:hidden}
+.hStat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .38s var(--sp)}
+.hStat:hover{border-color:var(--brd2);transform:translateY(-3px)}
+.hStat:hover::after{transform:scaleX(1)}
+.hSN{font-family:var(--fh);font-size:2.4rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:4px}
+.hSL{font-family:var(--fm);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--stone2)}
+/* Right — canvas/image panel */
+.hRight{position:relative;overflow:hidden;background:var(--bg3)}
+.hRight canvas{width:100%;height:100%;display:block}
+.hFloatCard{position:absolute;bottom:48px;left:40px;background:var(--white);border:1px solid var(--border);padding:16px 20px;box-shadow:0 8px 40px rgba(31,26,20,.12);z-index:3;max-width:210px}
+.hFC_lbl{font-family:var(--fm);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.hFC_dish{font-family:var(--fh);font-size:1.05rem;font-weight:600;color:var(--dark2)}
+.hFC_price{font-family:var(--fb);font-size:.78rem;color:var(--stone2);margin-top:3px}
+.hScrollCue{position:absolute;bottom:36px;left:64px;z-index:3;display:flex;align-items:center;gap:10px;opacity:0;animation:fadeUp .8s 1.4s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hScrollCue span{font-family:var(--fm);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--stone2)}
+.scrollMouse{width:22px;height:34px;border:1.5px solid var(--brd2);border-radius:12px;display:flex;justify-content:center;padding-top:5px}
+.scrollWheel{width:2.5px;height:5px;background:var(--accent);border-radius:2px;animation:sW 1.8s ease-in-out infinite}
+@keyframes sW{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(10px);opacity:0}}
+@media(max-width:900px){#hero{grid-template-columns:1fr}.hRight{height:55vw;min-height:280px}.hLeft{padding:110px 28px 60px}}
+
+/* ══════════════════════════════
+   MARQUEE
+══════════════════════════════ */
+.marqueeBar{background:var(--dark2);padding:14px 0;overflow:hidden}
+.mqTrack{display:flex;gap:0;width:max-content;animation:mq 26s linear infinite}
+.mqTrack:hover{animation-play-state:paused}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mqItem{font-family:var(--fh);font-size:1rem;font-style:italic;font-weight:400;color:rgba(250,247,242,.7);padding:0 28px;display:flex;align-items:center;gap:14px;white-space:nowrap}
+.mqItem::after{content:'✦';font-style:normal;font-size:.55rem;color:var(--acc3);opacity:.8}
+
+/* ══════════════════════════════
+   02 · ABOUT
+══════════════════════════════ */
+#about{padding:140px 64px;background:var(--bg)}
+.aboutGrid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center;max-width:1400px;margin:0 auto}
+.aImgWrap{position:relative}
+.aImgWrap canvas{width:100%;aspect-ratio:4/5;display:block}
+.aImgCap{font-family:var(--fm);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--stone2);text-align:center;margin-top:12px}
+.aBadge{position:absolute;bottom:-16px;right:-16px;width:100px;height:100px;background:var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.aBN{font-family:var(--fh);font-size:1.5rem;font-weight:700;color:var(--white);line-height:1}
+.aBL{font-family:var(--fm);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.aEye{font-family:var(--fm);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.aTitle{font-family:var(--fh);font-size:clamp(2.8rem,4.2vw,4.5rem);font-weight:700;line-height:1.05;letter-spacing:-.02em;color:var(--dark2);margin-bottom:26px}
+.aTitle em{font-style:italic;font-weight:400;color:var(--stone);display:block}
+.aQuote{font-family:var(--fh);font-size:1.12rem;font-style:italic;font-weight:400;color:var(--accent);border-left:2.5px solid var(--accent);padding-left:20px;margin-bottom:24px;line-height:1.72}
+.aP{font-size:.98rem;font-weight:300;color:var(--stone);line-height:1.9;margin-bottom:14px}
+.aPills{display:flex;gap:8px;flex-wrap:wrap;margin-top:28px}
+.aPill{font-family:var(--fm);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:7px 14px;border:1px solid var(--brd2);color:var(--stone);transition:all .22s;cursor:default}
+.aPill:hover{border-color:var(--accent);color:var(--accent)}
+.aStats{display:flex;gap:36px;margin-top:36px;padding-top:32px;border-top:1px solid var(--border)}
+.aStat{display:flex;flex-direction:column;gap:4px}
+.aSN{font-family:var(--fh);font-size:2rem;font-weight:700;color:var(--accent);line-height:1}
+.aSL{font-family:var(--fm);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--stone2)}
+@media(max-width:900px){#about{padding:80px 28px}.aboutGrid{grid-template-columns:1fr;gap:48px}}
+
+/* ══════════════════════════════
+   03 · MENU
+══════════════════════════════ */
+#menu{padding:120px 64px;background:var(--bg2)}
+.secHead{text-align:center;margin-bottom:60px}
+.secEye{font-family:var(--fm);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.secTitle{font-family:var(--fh);font-size:clamp(2.8rem,4vw,4.2rem);font-weight:700;line-height:1.05;letter-spacing:-.02em;color:var(--dark2)}
+.secTitle em{font-style:italic;font-weight:400;color:var(--stone)}
+.secSub{font-size:.97rem;font-weight:300;color:var(--stone2);margin-top:12px;font-style:italic}
+/* Tabs */
+.menuTabs{display:flex;justify-content:center;gap:3px;margin-bottom:52px}
+.mTab{font-family:var(--fb);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);background:var(--white);border:1px solid var(--border);padding:12px 26px;cursor:pointer;transition:all .22s}
+.mTab:hover{color:var(--dark);border-color:var(--brd2)}
+.mTab.on{color:var(--white);background:var(--accent);border-color:var(--accent)}
+.tabPane{display:none;animation:tpIn .42s var(--sp)}
+.tabPane.on{display:block}
+@keyframes tpIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* Dish grid */
+.dishGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px}
+.dishCard{background:var(--white);display:grid;grid-template-columns:200px 1fr;overflow:hidden;transition:box-shadow .3s;cursor:default;border:1px solid var(--border)}
+.dishCard:hover{box-shadow:0 8px 40px rgba(31,26,20,.1);border-color:var(--brd2)}
+.dishImg{position:relative;overflow:hidden}
+.dishImg canvas{width:100%;height:100%;display:block;transition:transform .6s var(--sp)}
+.dishCard:hover .dishImg canvas{transform:scale(1.06)}
+.dishBody{padding:24px 22px;display:flex;flex-direction:column;gap:8px}
+.dishTop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.dishName{font-family:var(--fh);font-size:1.08rem;font-weight:600;color:var(--dark2);line-height:1.25}
+.dishPrice{font-family:var(--fh);font-size:1.1rem;font-weight:700;color:var(--accent);white-space:nowrap;flex-shrink:0}
+.dishDesc{font-size:.83rem;font-weight:300;color:var(--stone);line-height:1.75;font-style:italic;flex:1}
+.dishFoot{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.dTag{font-family:var(--fm);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;background:rgba(200,68,10,.07);border:1px solid rgba(200,68,10,.2);color:var(--accent)}
+/* Wine */
+.wineGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.wineCol{background:var(--white);padding:32px 28px;border:1px solid var(--border)}
+.wineCat{font-family:var(--fh);font-size:1.05rem;font-style:italic;font-weight:600;color:var(--accent);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.wineRow{padding:12px 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:4px}
+.wineRow:last-child{border-bottom:none}
+.wN{font-family:var(--fb);font-size:.92rem;font-weight:400;color:var(--dark2)}
+.wR{font-family:var(--fm);font-size:.58rem;color:var(--stone2);grid-column:1;margin-top:3px;letter-spacing:.06em}
+.wP{font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--accent);grid-row:1/3;align-self:center;padding-left:12px}
+@media(max-width:900px){#menu{padding:80px 28px}.dishGrid{grid-template-columns:1fr}.dishCard{grid-template-columns:1fr}.dishImg{height:200px}.wineGrid{grid-template-columns:1fr}}
+
+/* ══════════════════════════════
+   04 · SPECIALS STRIP
+══════════════════════════════ */
+.specialsBar{background:var(--dark2);padding:80px 64px;position:relative;overflow:hidden}
+.specialsBar::before{content:'TODAY';position:absolute;right:48px;top:50%;transform:translateY(-50%);font-family:var(--fh);font-size:12rem;font-weight:700;color:rgba(250,247,242,.04);pointer-events:none;line-height:1}
+.spGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;position:relative;z-index:1}
+.spItem{padding:28px 24px;border-right:1px solid rgba(250,247,242,.08);transition:background .25s}
+.spItem:last-child{border-right:none}
+.spItem:hover{background:rgba(250,247,242,.04)}
+.spTag{font-family:var(--fm);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--acc3);margin-bottom:10px}
+.spName{font-family:var(--fh);font-size:1.2rem;font-weight:600;color:var(--white);margin-bottom:7px;line-height:1.2}
+.spDesc{font-size:.82rem;font-weight:300;color:rgba(250,247,242,.5);line-height:1.65;font-style:italic;margin-bottom:12px}
+.spPrice{font-family:var(--fh);font-size:1.6rem;font-weight:700;color:var(--acc2)}
+@media(max-width:860px){.specialsBar{padding:60px 28px}.spGrid{grid-template-columns:repeat(2,1fr)}.spItem{border-right:none;border-bottom:1px solid rgba(250,247,242,.08)}}
+@media(max-width:560px){.spGrid{grid-template-columns:1fr}}
+
+/* ══════════════════════════════
+   05 · GALLERY
+══════════════════════════════ */
+#gallery{padding:120px 64px;background:var(--bg);overflow:hidden}
+.galGrid{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:240px;gap:3px;margin-top:56px}
+.galCell{position:relative;overflow:hidden;cursor:pointer}
+.galCell canvas{width:100%;height:100%;display:block;transition:transform .65s var(--sp)}
+.galCell:hover canvas{transform:scale(1.07)}
+.gSpan3{grid-column:span 3}
+.gSpan4{grid-column:span 4}
+.gSpan5{grid-column:span 5}
+.gSpan6{grid-column:span 6}
+.gSpan7{grid-column:span 7}
+.gR2{grid-row:span 2}
+.galOver{position:absolute;inset:0;background:linear-gradient(to top,rgba(31,26,20,.7) 0%,transparent 50%);display:flex;align-items:flex-end;padding:18px;opacity:0;transition:opacity .32s}
+.galCell:hover .galOver{opacity:1}
+.galLbl{font-family:var(--fm);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bg)}
+@media(max-width:900px){.galGrid{grid-template-columns:1fr 1fr;grid-auto-rows:220px}.gSpan3,.gSpan4,.gSpan5,.gSpan6,.gSpan7{grid-column:span 1}.gR2{grid-row:span 1}}
+@media(max-width:560px){.galGrid{grid-template-columns:1fr}}
+
+/* ══════════════════════════════
+   06 · CHEF
+══════════════════════════════ */
+#chef{padding:140px 64px;background:var(--bg2)}
+.chefGrid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center;max-width:1400px;margin:0 auto}
+.chImgWrap{position:relative}
+.chImgWrap canvas{width:100%;aspect-ratio:4/5;display:block}
+.chFrame{position:absolute;top:-14px;left:-14px;right:14px;bottom:14px;border:1px solid var(--brd2);pointer-events:none;z-index:-1}
+.chEye{font-family:var(--fm);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.chName{font-family:var(--fh);font-size:clamp(2.8rem,4.5vw,5.2rem);font-weight:700;line-height:1.03;letter-spacing:-.03em;color:var(--dark2);margin-bottom:10px}
+.chName em{font-style:italic;font-weight:400;color:var(--stone);display:block}
+.chLine{width:48px;height:2.5px;background:var(--accent);margin-bottom:26px}
+.chP{font-size:1rem;font-weight:300;color:var(--stone);line-height:1.9;margin-bottom:14px}
+.chAwards{display:flex;flex-direction:column;gap:10px;margin-top:28px;padding-top:24px;border-top:1px solid var(--border)}
+.chAward{display:flex;align-items:center;gap:12px}
+.chADot{width:6px;height:6px;background:var(--accent);flex-shrink:0}
+.chATitle{font-family:var(--fb);font-size:.78rem;font-weight:700;color:var(--dark2);margin-bottom:1px}
+.chASub{font-family:var(--fm);font-size:.6rem;letter-spacing:.08em;color:var(--stone2)}
+@media(max-width:900px){#chef{padding:80px 28px}.chefGrid{grid-template-columns:1fr;gap:48px}.chImgWrap{max-width:400px}}
+
+/* ══════════════════════════════
+   07 · RESERVATIONS
+══════════════════════════════ */
+#reserve{padding:120px 64px;background:var(--bg)}
+.resGrid{display:grid;grid-template-columns:1fr 1fr;gap:96px;max-width:1400px;margin:0 auto;align-items:start}
+.reInfo .rEye{font-family:var(--fm);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.rTitle{font-family:var(--fh);font-size:clamp(2.8rem,4vw,4.2rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;color:var(--dark2);margin-bottom:20px}
+.rTitle em{font-style:italic;font-weight:400;color:var(--stone)}
+.rSub{font-size:.97rem;font-weight:300;color:var(--stone);line-height:1.85;font-style:italic;margin-bottom:32px}
+.hoursList{display:flex;flex-direction:column;gap:0;margin-bottom:32px}
+.hRow{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)}
+.hDay{font-family:var(--fm);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--stone2)}
+.hTime{font-family:var(--fb);font-size:.9rem;color:var(--dark);font-weight:300}
+.rContacts{display:flex;flex-direction:column;gap:10px}
+.rContact{display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--stone);transition:color .22s}
+.rContact:hover{color:var(--accent)}
+.rCIco{width:30px;height:30px;border:1px solid var(--brd2);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;background:var(--bg2)}
+/* Sticky Form */
+.reFormWrap{position:sticky;top:96px}
+.reForm{background:var(--white);border:1px solid var(--border);box-shadow:0 4px 40px rgba(31,26,20,.08)}
+.rfHead{padding:28px 32px;background:var(--dark2);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.rfTitle{font-family:var(--fh);font-size:1.45rem;font-weight:600;color:var(--bg);line-height:1.2}
+.rfSubTxt{font-family:var(--fm);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--acc3)}
+.rfBody{padding:28px 32px}
+.rfRow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.rfF{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;position:relative}
+.rfLbl{font-family:var(--fm);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--stone2)}
+.rfInp{background:var(--bg);border:1px solid var(--border);padding:12px 14px;font-size:.92rem;color:var(--dark);transition:border-color .25s,box-shadow .25s;width:100%;-webkit-appearance:none}
+.rfInp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,68,10,.08)}
+.rfInp::placeholder{color:var(--stone3)}
+.rfInp.err{border-color:#c0392b!important}
+.rfErrMsg{font-family:var(--fm);font-size:.57rem;color:#c0392b;height:0;overflow:hidden;opacity:0;transition:all .2s}
+.rfF.hasErr .rfErrMsg{height:auto;opacity:1;margin-top:2px}
+.rfSelect{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C8440A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:12px;padding-right:36px;background-color:var(--bg)}
+.rfSelect option{background:var(--white);color:var(--dark)}
+.rfTA{min-height:88px;resize:none}
+.gcWrap{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);width:fit-content}
+.gcBtn{width:40px;height:40px;background:none;cursor:pointer;color:var(--accent);font-size:1.1rem;transition:background .2s}
+.gcBtn:hover{background:rgba(200,68,10,.08)}
+.gcVal{font-family:var(--fh);font-size:1.05rem;color:var(--dark);width:44px;text-align:center}
+.rfSubmit{width:100%;padding:15px;background:var(--accent);border:none;cursor:pointer;font-family:var(--fb);font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--white);margin-top:20px;transition:background .25s,transform .28s var(--sp);display:flex;align-items:center;justify-content:center;gap:10px}
+.rfSubmit:hover{background:var(--acc2);transform:translateY(-2px)}
+.rfSubmit:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.rfNote{font-family:var(--fm);font-size:.55rem;letter-spacing:.06em;color:var(--stone2);text-align:center;margin-top:10px}
+.rfSuccess{display:none;background:var(--white);border:1px solid rgba(200,68,10,.25);padding:56px 36px;text-align:center;box-shadow:0 4px 40px rgba(31,26,20,.08)}
+.rfSuccess.show{display:block;animation:tpIn .5s var(--sp)}
+.rfSIco{width:58px;height:58px;border:1.5px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--accent);margin:0 auto 22px}
+.rfSTitle{font-family:var(--fh);font-size:1.55rem;font-weight:600;color:var(--dark2);margin-bottom:12px}
+.rfSP{font-size:.9rem;font-weight:300;color:var(--stone);line-height:1.75;font-style:italic;margin-bottom:8px}
+.rfSDetail{font-family:var(--fm);font-size:.63rem;letter-spacing:.1em;color:var(--accent);margin-bottom:24px}
+@media(max-width:900px){#reserve{padding:80px 28px}.resGrid{grid-template-columns:1fr;gap:48px}.reFormWrap{position:static}.rfRow{grid-template-columns:1fr}}
+
+/* ══════════════════════════════
+   08 · REVIEWS
+══════════════════════════════ */
+#reviews{padding:120px 64px;background:var(--bg2);overflow:hidden}
+.revTrack{display:flex;gap:20px;overflow:hidden;transition:transform .55s var(--sp);cursor:grab}
+.revTrack.grabbing{cursor:grabbing}
+.revCard{background:var(--white);border:1px solid var(--border);padding:32px 28px;min-width:calc(33.33% - 14px);flex-shrink:0;transition:box-shadow .3s,border-color .3s}
+.revCard:hover{box-shadow:0 8px 32px rgba(31,26,20,.08);border-color:var(--brd2)}
+.revStars{color:var(--accent);letter-spacing:3px;font-size:.88rem;margin-bottom:15px}
+.revText{font-family:var(--fh);font-size:.98rem;font-style:italic;font-weight:400;color:var(--stone);line-height:1.82;margin-bottom:22px}
+.revAuthor{display:flex;align-items:center;gap:13px}
+.revAv{width:42px;height:42px;border-radius:50%;background:rgba(200,68,10,.12);border:1px solid rgba(200,68,10,.25);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:.78rem;font-weight:700;color:var(--accent);flex-shrink:0}
+.revName{font-family:var(--fb);font-size:.9rem;font-weight:600;color:var(--dark2);margin-bottom:2px}
+.revRole{font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--stone2)}
+.revCtrl{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:32px}
+.revBtn{width:42px;height:42px;border:1px solid var(--brd2);background:var(--white);cursor:pointer;color:var(--stone);font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .22s}
+.revBtn:hover{border-color:var(--accent);color:var(--accent);background:rgba(200,68,10,.05)}
+.revDots{display:flex;gap:8px}
+.revDot{width:7px;height:7px;border-radius:50%;background:var(--brd2);cursor:pointer;transition:all .28s}
+.revDot.on{background:var(--accent);width:20px;border-radius:4px}
+@media(max-width:900px){#reviews{padding:80px 28px}.revCard{min-width:100%}}
+
+/* ══════════════════════════════
+   09 · FOOTER
+══════════════════════════════ */
+#footer{background:var(--dark2)}
+.ftTop{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding:72px 64px;border-bottom:1px solid rgba(250,247,242,.08)}
+.ftLogo{font-family:var(--fh);font-size:1.6rem;font-weight:700;color:var(--bg);margin-bottom:10px;letter-spacing:-.01em}
+.ftLogo em{font-style:italic;color:var(--acc3)}
+.ftTag{font-family:var(--fh);font-size:.95rem;font-style:italic;font-weight:300;color:rgba(250,247,242,.38);margin-bottom:22px}
+.ftSocs{display:flex;gap:9px}
+.ftSoc{width:34px;height:34px;border:1px solid rgba(250,247,242,.18);display:flex;align-items:center;justify-content:center;color:rgba(250,247,242,.38);transition:all .22s;font-size:.82rem}
+.ftSoc:hover{border-color:var(--acc3);color:var(--acc3)}
+.ftCT{font-family:var(--fm);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc3);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(250,247,242,.08)}
+.ftLnk{display:block;font-size:.88rem;font-weight:300;color:rgba(250,247,242,.4);margin-bottom:9px;transition:color .2s}
+.ftLnk:hover{color:var(--bg)}
+.ftTxt{font-size:.88rem;font-weight:300;color:rgba(250,247,242,.38);line-height:1.75}
+/* Map */
+.ftMap{height:240px;position:relative;border-bottom:1px solid rgba(250,247,242,.06);overflow:hidden}
+.ftMap canvas{width:100%;height:100%}
+.mapPinWrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2}
+.mapPinDot{width:12px;height:12px;border-radius:50%;background:var(--acc2);box-shadow:0 0 0 5px rgba(224,96,42,.2);animation:mpP 2.2s ease-in-out infinite}
+@keyframes mpP{0%,100%{box-shadow:0 0 0 4px rgba(224,96,42,.2)}50%{box-shadow:0 0 0 10px rgba(224,96,42,.05)}}
+.mapPinLbl{font-family:var(--fm);font-size:.57rem;letter-spacing:.14em;text-transform:uppercase;color:var(--acc2);background:rgba(31,26,20,.88);border:1px solid rgba(250,247,242,.12);padding:4px 10px;white-space:nowrap}
+.ftBot{padding:20px 64px;display:flex;justify-content:space-between;align-items:center;font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(250,247,242,.25)}
+.ftLeg{display:flex;gap:20px}
+.ftLeg a{color:rgba(250,247,242,.25);transition:color .2s}
+.ftLeg a:hover{color:var(--bg)}
+@media(max-width:900px){.ftTop{grid-template-columns:1fr 1fr;padding:48px 28px}.ftBot{padding:18px 28px;flex-direction:column;gap:10px}}
+@media(max-width:560px){.ftTop{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="cD"></div>
+<div id="cR"></div>
+<div id="sPr"></div>
+<div id="root"></div>
+
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback,useMemo} = React;
+
+/* ══════════════════════════════
+   useCanvas — shared canvas hook
+══════════════════════════════ */
+function useCanvas(drawFn) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current; if (!c) return;
+    const ctx = c.getContext('2d');
+    let W, H, raf, t = 0;
+    const ro = new ResizeObserver(() => { W = c.width = c.offsetWidth; H = c.height = c.offsetHeight; });
+    W = c.width = c.offsetWidth; H = c.height = c.offsetHeight;
+    ro.observe(c);
+    const loop = () => { t += .006; drawFn(ctx, W, H, t); raf = requestAnimationFrame(loop); };
+    loop();
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, []);
+  return ref;
+}
+
+/* ══════════════════════════════
+   CANVAS PAINTERS — all warm tones, no black
+══════════════════════════════ */
+
+// Hero — light warm food scene on cream bg
+function HeroCanvas() {
+  const ref = useCanvas((ctx, W, H, t) => {
+    // Warm cream background
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#EDE4D6');
+    bg.addColorStop(.5, '#E4D9C8');
+    bg.addColorStop(1, '#D8CDB8');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    // Warm amber light from top-right
+    const li = ctx.createRadialGradient(W * .8, H * .15, 0, W * .8, H * .15, W * .7);
+    li.addColorStop(0, 'rgba(220, 160, 80, .22)');
+    li.addColorStop(.5, 'rgba(200, 130, 50, .1)');
+    li.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = li; ctx.fillRect(0, 0, W, H);
+
+    // Table surface suggestion
+    const tbl = ctx.createLinearGradient(0, H * .55, 0, H);
+    tbl.addColorStop(0, 'rgba(160, 120, 70, .18)');
+    tbl.addColorStop(1, 'rgba(140, 100, 55, .3)');
+    ctx.fillStyle = tbl; ctx.fillRect(0, H * .55, W, H);
+
+    // Plate shadow
+    const cx = W * .5, cy = H * .5, pr = Math.min(W, H) * .34;
+    const sh = ctx.createRadialGradient(cx, cy + pr * .12, 0, cx, cy + pr * .1, pr * 1.2);
+    sh.addColorStop(0, 'rgba(80, 55, 30, .28)');
+    sh.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sh;
+    ctx.beginPath(); ctx.ellipse(cx, cy + pr * .1, pr * 1.1, pr * .28, 0, 0, Math.PI * 2); ctx.fill();
+
+    // Plate
+    const pg = ctx.createRadialGradient(cx - pr * .08, cy - pr * .1, 0, cx, cy, pr);
+    pg.addColorStop(0, '#F5F0E6');
+    pg.addColorStop(.65, '#EDE5D5');
+    pg.addColorStop(1, '#D8CEBD');
+    ctx.fillStyle = pg;
+    ctx.beginPath(); ctx.arc(cx, cy, pr, 0, Math.PI * 2); ctx.fill();
+
+    // Plate rim
+    ctx.strokeStyle = 'rgba(180, 165, 145, .5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, pr * .87, 0, Math.PI * 2); ctx.stroke();
+
+    // Inner plate pattern (subtle)
+    ctx.strokeStyle = 'rgba(180, 165, 145, .2)';
+    ctx.lineWidth = .5;
+    ctx.beginPath(); ctx.arc(cx, cy, pr * .78, 0, Math.PI * 2); ctx.stroke();
+
+    // FOOD — elegant seared protein
+    const mg = ctx.createLinearGradient(cx - pr * .28, cy - pr * .14, cx + pr * .28, cy + pr * .14);
+    mg.addColorStop(0, '#5A2810');
+    mg.addColorStop(.4, '#9B4520');
+    mg.addColorStop(.7, '#7A3318');
+    mg.addColorStop(1, '#3E1C08');
+    ctx.fillStyle = mg;
+    ctx.beginPath(); ctx.ellipse(cx, cy - pr * .02, pr * .3, pr * .18, Math.PI * .08, 0, Math.PI * 2); ctx.fill();
+
+    // Sear marks
+    ctx.strokeStyle = 'rgba(45, 20, 5, .8)';
+    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.moveTo(cx + i * 14 - pr * .22, cy - pr * .14);
+      ctx.lineTo(cx + i * 14 + pr * .08, cy + pr * .13);
+      ctx.stroke();
+    }
+
+    // Herb purée swipe
+    ctx.strokeStyle = 'rgba(74, 103, 65, .75)';
+    ctx.lineWidth = 9; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx - pr * .48, cy + pr * .09);
+    ctx.bezierCurveTo(cx - pr * .18, cy - pr * .04, cx + pr * .12, cy + pr * .14, cx + pr * .48, cy + pr * .06);
+    ctx.stroke();
+
+    // Sauce dots — terracotta
+    [[.22, .06, 'rgba(200,68,10,.55)'], [-.28, -.06, 'rgba(180,55,8,.45)'], [.08, -.19, 'rgba(210,75,15,.6)']].forEach(([dx, dy, col]) => {
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(cx + dx * pr, cy + dy * pr, 4 + Math.random() * 2.5, 0, Math.PI * 2); ctx.fill();
+    });
+
+    // Micro-greens
+    for (let i = 0; i < 16; i++) {
+      const gx = cx + (Math.random() - .5) * pr * .42;
+      const gy = cy - pr * .09 + (Math.random() - .5) * pr * .16;
+      ctx.strokeStyle = `rgba(${60 + Math.random() * 50},${110 + Math.random() * 50},${30 + Math.random() * 25},.9)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy + 5);
+      ctx.bezierCurveTo(gx - 4, gy - 2, gx + 3, gy - 8, gx + (Math.random() - .5) * 6, gy - 13);
+      ctx.stroke();
+    }
+
+    // Edible flower
+    const fx = cx - pr * .27, fy = cy - pr * .2;
+    for (let p = 0; p < 6; p++) {
+      ctx.fillStyle = `rgba(200, 100, 120, ${.45 + p * .05})`;
+      ctx.beginPath();
+      ctx.ellipse(fx + Math.cos(p * Math.PI / 3) * 7, fy + Math.sin(p * Math.PI / 3) * 7, 5, 3, p * Math.PI / 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(220, 180, 30, .9)';
+    ctx.beginPath(); ctx.arc(fx, fy, 3, 0, Math.PI * 2); ctx.fill();
+
+    // Pomme purée quenelle
+    ctx.fillStyle = 'rgba(240, 230, 200, .65)';
+    ctx.beginPath(); ctx.ellipse(cx - pr * .2, cy + pr * .11, pr * .11, pr * .06, -.22, 0, Math.PI * 2); ctx.fill();
+
+    // Crumble
+    for (let i = 0; i < 15; i++) {
+      ctx.fillStyle = `rgba(160, 120, 55, ${.3 + Math.random() * .35})`;
+      ctx.beginPath();
+      ctx.arc(cx + (Math.random() - .5) * pr * .55, cy + pr * .13 + (Math.random() - .5) * pr * .07, 1.5 + Math.random() * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Decorative elements on table — fork & knife suggestion
+    ctx.strokeStyle = 'rgba(140, 110, 70, .2)';
+    ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+    // Fork
+    const fkx = cx - pr * .75, fky = cy - pr * .25;
+    ctx.beginPath(); ctx.moveTo(fkx, fky - pr * .22); ctx.lineTo(fkx, fky + pr * .22); ctx.stroke();
+    for (let i = -1; i <= 1; i++) {
+      ctx.beginPath(); ctx.moveTo(fkx + i * 4, fky - pr * .22); ctx.lineTo(fkx + i * 4, fky - pr * .1); ctx.stroke();
+    }
+    // Knife
+    const knx = cx + pr * .72, kny = cy - pr * .25;
+    ctx.beginPath(); ctx.moveTo(knx, kny - pr * .22); ctx.lineTo(knx, kny + pr * .22); ctx.stroke();
+  });
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />;
+}
+
+// About — warm lit interior scene
+function AboutCanvas() {
+  const ref = useCanvas((ctx, W, H, t) => {
+    // Warm interior bg
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#2C1A0A');
+    bg.addColorStop(.55, '#1E1008');
+    bg.addColorStop(1, '#160C05');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    // Multiple warm candle glows
+    [[W * .38, H * .58], [W * .62, H * .6], [W * .52, H * .28]].forEach(([x, y], i) => {
+      const fl = .82 + .18 * Math.sin(t * 3.1 + i * 1.6);
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 65 * fl);
+      g.addColorStop(0, `rgba(255, 170, 55, ${.24 * fl})`);
+      g.addColorStop(.4, `rgba(210, 110, 25, ${.11 * fl})`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    });
+
+    // Table
+    const tbl = ctx.createLinearGradient(0, H * .6, 0, H);
+    tbl.addColorStop(0, 'rgba(80, 50, 22, .92)');
+    tbl.addColorStop(1, 'rgba(55, 32, 12, .98)');
+    ctx.fillStyle = tbl; ctx.fillRect(W * .04, H * .6, W * .92, H);
+
+    // White tablecloth sheen
+    const tc = ctx.createLinearGradient(W * .04, H * .57, W * .96, H * .65);
+    tc.addColorStop(0, 'rgba(245, 237, 216, 0)');
+    tc.addColorStop(.3, 'rgba(245, 237, 216, .09)');
+    tc.addColorStop(.65, 'rgba(245, 237, 216, .14)');
+    tc.addColorStop(1, 'rgba(245, 237, 216, 0)');
+    ctx.fillStyle = tc; ctx.fillRect(W * .04, H * .57, W * .92, H * .1);
+
+    // Wine glass
+    ctx.strokeStyle = `rgba(215, 195, 165, ${.18 + Math.sin(t * .55) * .03})`;
+    ctx.lineWidth = 1;
+    const gx = W * .52, gy = H * .38;
+    ctx.beginPath(); ctx.moveTo(gx, gy);
+    ctx.bezierCurveTo(gx - 16, gy + 23, gx - 16, gy + 37, gx - 9, gy + 51);
+    ctx.lineTo(gx + 9, gy + 51);
+    ctx.bezierCurveTo(gx + 16, gy + 37, gx + 16, gy + 23, gx, gy);
+    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gx - 8, gy + 51); ctx.lineTo(gx + 8, gy + 51); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gx, gy + 51); ctx.lineTo(gx, gy + 62); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gx - 15, gy + 62); ctx.lineTo(gx + 15, gy + 62); ctx.stroke();
+
+    // Wine
+    ctx.fillStyle = `rgba(130, 28, 18, ${.38 + Math.sin(t) * .04})`;
+    ctx.beginPath(); ctx.ellipse(gx, gy + 23, 9, 4.5, 0, 0, Math.PI * 2); ctx.fill();
+
+    // Plate silhouettes
+    ctx.strokeStyle = 'rgba(215, 195, 155, .14)'; ctx.lineWidth = 1;
+    [[W * .3, H * .65], [W * .72, H * .65]].forEach(([px, py]) => {
+      ctx.beginPath(); ctx.arc(px, py, W * .1, 0, Math.PI * 2); ctx.stroke();
+    });
+
+    // Architectural warm lines
+    ctx.strokeStyle = 'rgba(200, 140, 60, .05)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W * .5, H * .38); ctx.lineTo(0, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W * .5, H * .38); ctx.lineTo(W, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, H * .08); ctx.lineTo(W, H * .08); ctx.stroke();
+  });
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />;
+}
+
+// Per-dish canvas — warm food art on cream plate
+function DishCanvas({ type }) {
+  const ref = useCanvas((ctx, W, H, t) => {
+    // Warm linen background
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#2A1A0C');
+    bg.addColorStop(1, '#1C1008');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    // Warm ambient
+    const wa = ctx.createRadialGradient(W * .5, H * .5, 0, W * .5, H * .5, W * .7);
+    wa.addColorStop(0, 'rgba(200, 120, 40, .2)');
+    wa.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = wa; ctx.fillRect(0, 0, W, H);
+
+    const cx = W * .5, cy = H * .52, pr = Math.min(W, H) * .37;
+
+    // Plate shadow
+    const ps = ctx.createRadialGradient(cx, cy + pr * .1, 0, cx, cy + pr * .1, pr * 1.1);
+    ps.addColorStop(0, 'rgba(80,50,20,.25)'); ps.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = ps;
+    ctx.beginPath(); ctx.ellipse(cx, cy + pr * .1, pr * 1.08, pr * .26, 0, 0, Math.PI * 2); ctx.fill();
+
+    // Plate body — warm cream
+    const pg = ctx.createRadialGradient(cx - pr * .1, cy - pr * .1, 0, cx, cy, pr);
+    pg.addColorStop(0, '#F4EFE5');
+    pg.addColorStop(.65, '#EAE2D5');
+    pg.addColorStop(1, '#D8CEBD');
+    ctx.fillStyle = pg;
+    ctx.beginPath(); ctx.arc(cx, cy, pr, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(185, 170, 150, .4)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, pr * .86, 0, Math.PI * 2); ctx.stroke();
+
+    if (type === 'oyster') {
+      ctx.fillStyle = 'rgba(165, 195, 215, .22)';
+      ctx.beginPath(); ctx.ellipse(cx, cy, pr * .44, pr * .3, Math.PI * .12, 0, Math.PI * 2); ctx.fill();
+      for (let i = 0; i < 20; i++) {
+        ctx.beginPath(); ctx.arc(cx + (Math.random() - .5) * pr * .62, cy + (Math.random() - .5) * pr * .24, 1.5 + Math.random() * 5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(228, 240, 252, ${.06 + Math.random() * .08})`; ctx.fill();
+      }
+      for (let i = 0; i < 8; i++) {
+        ctx.fillStyle = 'rgba(74, 103, 65, .85)';
+        ctx.fillRect(cx + (Math.random() - .5) * pr * .38, cy + (Math.random() - .5) * pr * .2, 2, 2);
+      }
+    } else if (type === 'soup') {
+      const sg = ctx.createRadialGradient(cx, cy, 0, cx, cy, pr * .41);
+      sg.addColorStop(0, 'rgba(225, 172, 68, .75)');
+      sg.addColorStop(.5, 'rgba(190, 125, 38, .58)');
+      sg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = sg;
+      ctx.beginPath(); ctx.ellipse(cx, cy, pr * .41, pr * .27, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(65, 28, 8, .68)'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < 50; i++) {
+        const a = (i / 50) * Math.PI * 3.5, r = i * (pr * .006);
+        const x2 = cx + Math.cos(a) * r, y2 = cy + Math.sin(a) * r * .6;
+        i === 0 ? ctx.moveTo(x2, y2) : ctx.lineTo(x2, y2);
+      }
+      ctx.stroke();
+      for (let i = 0; i < 5; i++) {
+        ctx.fillStyle = 'rgba(25, 12, 3, .82)';
+        ctx.beginPath(); ctx.ellipse(cx + (Math.random() - .5) * pr * .26, cy + (Math.random() - .5) * pr * .16, 4 + Math.random() * 6, 2 + Math.random() * 3, Math.random() * Math.PI, 0, Math.PI * 2); ctx.fill();
+      }
+    } else if (type === 'tartare') {
+      const tg = ctx.createLinearGradient(cx - pr * .28, cy, cx + pr * .28, cy);
+      tg.addColorStop(0, 'rgba(148, 58, 32, .82)');
+      tg.addColorStop(.5, 'rgba(168, 72, 40, .9)');
+      tg.addColorStop(1, 'rgba(115, 44, 22, .78)');
+      ctx.fillStyle = tg;
+      ctx.beginPath(); ctx.ellipse(cx, cy, pr * .26, pr * .17, 0, 0, Math.PI * 2); ctx.fill();
+      const yg = ctx.createRadialGradient(cx, cy - pr * .05, 0, cx, cy - pr * .05, pr * .1);
+      yg.addColorStop(0, 'rgba(255, 200, 45, .96)');
+      yg.addColorStop(.5, 'rgba(225, 155, 18, .82)');
+      yg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = yg;
+      ctx.beginPath(); ctx.arc(cx, cy - pr * .05, pr * .09, 0, Math.PI * 2); ctx.fill();
+      for (let i = 0; i < 12; i++) {
+        ctx.fillStyle = 'rgba(48, 78, 28, .9)';
+        ctx.beginPath(); ctx.arc(cx + (Math.random() - .5) * pr * .48, cy + (Math.random() - .5) * pr * .27, 1.5 + Math.random() * 2, 0, Math.PI * 2); ctx.fill();
+      }
+    } else if (type === 'steak') {
+      const sg = ctx.createLinearGradient(cx, cy - pr * .22, cx, cy + pr * .22);
+      sg.addColorStop(0, 'rgba(68, 30, 9, .96)');
+      sg.addColorStop(.35, 'rgba(138, 62, 22, .84)');
+      sg.addColorStop(.7, 'rgba(108, 46, 16, .88)');
+      sg.addColorStop(1, 'rgba(52, 20, 6, .96)');
+      ctx.fillStyle = sg;
+      ctx.beginPath(); ctx.ellipse(cx, cy, pr * .33, pr * .21, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(22, 8, 2, .88)'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+      for (let i = -2; i <= 2; i++) {
+        ctx.beginPath(); ctx.moveTo(cx + i * 13 - pr * .22, cy - pr * .17); ctx.lineTo(cx + i * 13 + pr * .1, cy + pr * .17); ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(220, 175, 58, .48)';
+      ctx.beginPath(); ctx.arc(cx + pr * .18, cy - pr * .1, pr * .1, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(242, 232, 210, .58)';
+      ctx.beginPath(); ctx.ellipse(cx - pr * .22, cy + pr * .1, pr * .11, pr * .06, -.22, 0, Math.PI * 2); ctx.fill();
+    } else if (type === 'lobster') {
+      const lg = ctx.createRadialGradient(cx, cy, 0, cx, cy, pr * .42);
+      lg.addColorStop(0, 'rgba(218, 65, 42, .8)');
+      lg.addColorStop(.5, 'rgba(192, 48, 26, .65)');
+      lg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = 'rgba(238, 78, 58, .65)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(cx, cy, pr * .32, pr * .15, 0, 0, Math.PI * 2); ctx.stroke();
+      [[-.08, 0, -.42, -.22], [.08, 0, .42, -.22]].forEach(([sx, sy, ex, ey]) => {
+        ctx.strokeStyle = 'rgba(218, 62, 42, .4)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx + sx * pr, cy + sy * pr); ctx.lineTo(cx + ex * pr, cy + ey * pr); ctx.stroke();
+      });
+    } else if (type === 'veggie') {
+      ctx.fillStyle = 'rgba(168, 112, 36, .62)';
+      ctx.beginPath(); ctx.ellipse(cx, cy, pr * .3, pr * .19, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(35, 20, 6, .7)';
+      ctx.beginPath(); ctx.ellipse(cx, cy + pr * .08, pr * .36, pr * .1, 0, 0, Math.PI * 2); ctx.fill();
+      for (let i = 0; i < 14; i++) {
+        ctx.strokeStyle = `rgba(74, 103, 65, .72)`; ctx.lineWidth = 1;
+        const lx = cx + (Math.random() - .5) * pr * .42, ly = cy + (Math.random() - .5) * pr * .17;
+        ctx.beginPath(); ctx.moveTo(lx, ly); ctx.bezierCurveTo(lx - 5, ly - 7, lx + 3, ly - 13, lx + (Math.random() - .5) * 9, ly - 18); ctx.stroke();
+      }
+    } else if (type === 'choc') {
+      const cg = ctx.createLinearGradient(cx - pr * .23, cy - pr * .14, cx + pr * .23, cy + pr * .14);
+      cg.addColorStop(0, 'rgba(35, 14, 4, .98)');
+      cg.addColorStop(.5, 'rgba(55, 24, 8, .95)');
+      cg.addColorStop(1, 'rgba(28, 10, 3, .98)');
+      ctx.fillStyle = cg;
+      ctx.beginPath(); ctx.roundRect(cx - pr * .22, cy - pr * .13, pr * .44, pr * .26, 3); ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 215, 48, .75)'; ctx.lineWidth = 1.5;
+      ctx.save(); ctx.translate(cx + pr * .07, cy - pr * .1); ctx.rotate(.35); ctx.strokeRect(-6, -2, 12, 4); ctx.restore();
+      ctx.strokeStyle = 'rgba(198, 128, 16, .68)'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(cx - pr * .1, cy - pr * .1); ctx.bezierCurveTo(cx, cy - pr * .02, cx + pr * .04, cy + pr * .05, cx + pr * .12, cy + pr * .12); ctx.stroke();
+    } else if (type === 'tart') {
+      const tg = ctx.createRadialGradient(cx, cy, 0, cx, cy, pr * .31);
+      tg.addColorStop(0, 'rgba(198, 138, 38, .9)');
+      tg.addColorStop(.6, 'rgba(158, 98, 18, .76)');
+      tg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = tg;
+      ctx.beginPath(); ctx.arc(cx, cy, pr * .3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(162, 82, 8, .44)';
+      ctx.beginPath(); ctx.arc(cx, cy, pr * .28, 0, Math.PI * 2); ctx.fill();
+      [[-.11, -.15, 'rgba(235, 65, 55, .74)'], [.1, -.17, 'rgba(218, 50, 44, .84)'], [-.08, .11, 'rgba(198, 38, 32, .72)']].forEach(([dx, dy, c]) => {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(cx + dx * pr, cy + dy * pr, 4 + Math.random() * 3, 0, Math.PI * 2); ctx.fill();
+      });
+    } else {
+      // Cheese / default — warm brown
+      const cols = ['rgba(218, 180, 82, .62)', 'rgba(200, 162, 62, .57)', 'rgba(208, 170, 72, .52)', 'rgba(188, 148, 52, .62)', 'rgba(195, 155, 66, .57)'];
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2 - Math.PI * .5;
+        ctx.fillStyle = cols[i];
+        ctx.beginPath(); ctx.ellipse(cx + Math.cos(a) * pr * .22, cy + Math.sin(a) * pr * .22, pr * .09, pr * .07, a, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // Rim shadow
+    ctx.strokeStyle = 'rgba(200, 68, 10, .07)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, pr, 0, Math.PI * 2); ctx.stroke();
+  });
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />;
+}
+
+// Gallery canvas — warm atmospheric
+function GalCanvas({ type }) {
+  const PALS = {
+    int1: ['#28160A', '#3A2012', 'rgba(200,120,40,.28)', 'rgba(255,175,70,.15)'],
+    plate: ['#201408', '#2E1C0C', 'rgba(180,80,25,.22)', 'rgba(230,90,50,.15)'],
+    herb: ['#141E0C', '#1E2C12', 'rgba(60,110,25,.26)', 'rgba(180,155,42,.12)'],
+    kitchen: ['#181410', '#241C14', 'rgba(145,90,30,.2)', 'rgba(205,155,65,.1)'],
+    dessert: ['#201609', '#2C1C0E', 'rgba(195,135,42,.22)', 'rgba(238,90,32,.15)'],
+    int2: ['#1E1008', '#2C1A0C', 'rgba(185,80,22,.26)', 'rgba(255,158,55,.12)'],
+  };
+  const p = PALS[type] || PALS.int1;
+  const ref = useCanvas((ctx, W, H, t) => {
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, p[0]); bg.addColorStop(1, p[1]);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    const g1 = ctx.createRadialGradient(W * .5, H * .4, 0, W * .5, H * .4, Math.max(W, H) * .72);
+    g1.addColorStop(0, p[2]); g1.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+
+    if (p[3]) {
+      const g2 = ctx.createRadialGradient(W * .78, H * .72, 0, W * .78, H * .72, Math.max(W, H) * .46);
+      g2.addColorStop(0, p[3]); g2.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+    }
+
+    // Candle glow for interiors
+    if (type === 'int1' || type === 'int2') {
+      [[.3, .58], [.7, .6], [.5, .36]].forEach(([cx, cy], i) => {
+        const fl = .8 + .2 * Math.sin(t * 3.1 + i * 1.5);
+        const g = ctx.createRadialGradient(cx * W, cy * H, 0, cx * W, cy * H, 50 * fl);
+        g.addColorStop(0, `rgba(255, 172, 52, ${.26 * fl})`);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      });
+    }
+
+    // Atmospheric letterform
+    ctx.save();
+    ctx.globalAlpha = .055;
+    ctx.font = `700 ${Math.min(W, H) * .52}px Cormorant Garamond, serif`;
+    ctx.fillStyle = '#FAF7F2';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('E', W * .5, H * .5);
+    ctx.restore();
+  });
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />;
+}
+
+// Chef canvas — dramatic side-lit warm portrait
+function ChefCanvas() {
+  const ref = useCanvas((ctx, W, H, t) => {
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#241808');
+    bg.addColorStop(.5, '#180E05');
+    bg.addColorStop(1, '#100A04');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    // Warm side-light
+    const sl = ctx.createRadialGradient(W, H * .25, 0, W, H * .25, W * .95);
+    sl.addColorStop(0, 'rgba(228, 150, 55, .15)');
+    sl.addColorStop(.4, 'rgba(190, 110, 30, .08)');
+    sl.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sl; ctx.fillRect(0, 0, W, H);
+
+    // Chef silhouette — very subtle
+    ctx.fillStyle = 'rgba(245, 237, 216, .035)';
+    ctx.beginPath(); ctx.arc(W * .44, H * .25, W * .13, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = 'rgba(245, 237, 216, .048)';
+    ctx.beginPath(); ctx.ellipse(W * .44, H * .14, W * .11, W * .075, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillRect(W * .34, H * .095, W * .2, W * .065);
+
+    ctx.fillStyle = 'rgba(245, 237, 216, .022)';
+    ctx.beginPath();
+    ctx.moveTo(W * .18, H); ctx.lineTo(W * .28, H * .38);
+    ctx.lineTo(W * .44, H * .36); ctx.lineTo(W * .6, H * .38);
+    ctx.lineTo(W * .72, H); ctx.closePath(); ctx.fill();
+
+    // Button line — terracotta
+    ctx.strokeStyle = 'rgba(200, 68, 10, .2)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W * .44, H * .41); ctx.lineTo(W * .44, H * .84); ctx.stroke();
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath(); ctx.arc(W * .44, H * (.45 + i * .07), 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(200, 68, 10, .3)'; ctx.fill();
+    }
+
+    // Name plate area
+    ctx.fillStyle = 'rgba(35, 22, 8, .78)';
+    ctx.fillRect(W * .1, H * .85, W * .8, H * .11);
+    ctx.strokeStyle = 'rgba(200, 68, 10, .2)'; ctx.lineWidth = 1;
+    ctx.strokeRect(W * .1, H * .85, W * .8, H * .11);
+  });
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />;
+}
+
+// Map canvas — warm earthy tones
+function MapCanvas() {
+  const ref = useCanvas((ctx, W, H, t) => {
+    ctx.fillStyle = '#2C1C0A'; ctx.fillRect(0, 0, W, H);
+
+    // Street grid
+    ctx.strokeStyle = 'rgba(200, 68, 10, .08)'; ctx.lineWidth = 1;
+    const g = 42;
+    for (let x = 0; x < W; x += g) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += g) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    // Major roads
+    ctx.strokeStyle = 'rgba(200, 68, 10, .16)'; ctx.lineWidth = 2;
+    [[0, H * .44, W, H * .44], [0, H * .57, W, H * .57], [W * .32, 0, W * .32, H], [W * .53, 0, W * .53, H], [W * .74, 0, W * .74, H]].forEach(([x1, y1, x2, y2]) => {
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    });
+
+    // Blocks
+    ctx.fillStyle = 'rgba(200, 68, 10, .06)';
+    [[W * .08, H * .08, W * .22, H * .35], [W * .35, H * .47, W * .16, H * .1], [W * .56, H * .08, W * .16, H * .35]].forEach(([x, y, w, h]) => ctx.fillRect(x, y, w, h));
+
+    // River — blue-warm
+    ctx.strokeStyle = 'rgba(100, 145, 195, .14)'; ctx.lineWidth = 11; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, H * .72); ctx.bezierCurveTo(W * .28, H * .75, W * .5, H * .68, W * .76, H * .72); ctx.bezierCurveTo(W * .87, H * .74, W * .93, H * .7, W, H * .72); ctx.stroke();
+  });
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />;
+}
+
+/* ══════════════════════════════
+   NAV COMPONENT
+══════════════════════════════ */
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [active, setActive] = useState('hero');
+
+  useEffect(() => {
+    const handler = () => {
+      const sy = window.scrollY;
+      setScrolled(sy > 60);
+      const el = document.getElementById('sPr');
+      if (el) el.style.width = (sy / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+      let cur = 'hero';
+      ['about', 'menu', 'gallery', 'chef', 'reserve', 'reviews'].forEach(id => {
+        const s = document.getElementById(id);
+        if (s && sy >= s.offsetTop - 140) cur = id;
+      });
+      setActive(cur);
+    };
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
+  const go = id => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setMenuOpen(false);
+    document.body.style.overflow = '';
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(p => {
+      document.body.style.overflow = !p ? 'hidden' : '';
+      return !p;
+    });
+  };
+
+  const LINKS = [['about', 'About'], ['menu', 'Menu'], ['chef', 'Chef'], ['gallery', 'Gallery'], ['reserve', 'Reserve']];
+
+  return (<>
+    <nav id="nav" className={scrolled ? 'scrolled' : ''}>
+      <div className="nLogo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <em>E</em>mber
+      </div>
+      <ul className="nLinks">
+        {LINKS.map(([id, lbl]) => (
+          <li key={id}>
+            <a href={'#' + id} className={active === id ? 'on' : ''} onClick={e => { e.preventDefault(); go(id); }}>{lbl}</a>
+          </li>
+        ))}
+      </ul>
+      <div className="nRight">
+        <a href="#reserve" className="nCTA" onClick={e => { e.preventDefault(); go('reserve'); }}>Reserve Now</a>
+        <div className={`nBurger ${menuOpen ? 'open' : ''}`} onClick={toggleMenu}>
+          <span /><span /><span />
+        </div>
+      </div>
+    </nav>
+    <div className={`mobileMenu ${menuOpen ? 'open' : ''}`}>
+      {LINKS.map(([id, lbl]) => (
+        <a key={id} href={'#' + id} onClick={e => { e.preventDefault(); go(id); }}>{lbl}</a>
+      ))}
+      <a href="#reserve" className="mCTA" onClick={e => { e.preventDefault(); go('reserve'); }}>Reserve a Table</a>
+    </div>
+  </>);
+}
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
+function Hero() {
+  const DISHES = ['Herb-Crusted Lamb', 'Braised Short Rib', 'Sea Bass Ceviche', 'Wagyu Tenderloin', 'Duck Confit'];
+  const [dishIdx, setDishIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setDishIdx(p => (p + 1) % DISHES.length), 3500);
+    return () => clearInterval(t);
+  }, []);
+
+  const STATS = [['★★', 'Michelin Stars'], ['24', 'Covers'], ['9', 'Courses']];
+
+  return (
+    <section id="hero">
+      <div className="hLeft">
+        <div className="hBadge rv">Fine Dining · Est. 2019</div>
+        <h1 className="hTitle rv d1">
+          Where<br />
+          <span className="ti">Flavour</span>
+          <span className="ta">Lives.</span>
+        </h1>
+        <p className="hDesc rv d2">
+          Seasonal ingredients sourced within 50 miles. Every plate a conversation between the land and your table.
+        </p>
+        <div className="hBtns rv d3">
+          <a href="#reserve" className="bFill" onClick={e => { e.preventDefault(); document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' }); }}>
+            <span>Reserve Tonight</span>
+          </a>
+          <a href="#menu" className="bLine" onClick={e => { e.preventDefault(); document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' }); }}>
+            Explore Menu
+          </a>
+        </div>
+        <div className="hStats rv d4">
+          {STATS.map(([n, l]) => (
+            <div key={l} className="hStat">
+              <div className="hSN">{n}</div>
+              <div className="hSL">{l}</div>
+            </div>
+          ))}
+        </div>
+        <div className="hScrollCue">
+          <div className="scrollMouse"><div className="scrollWheel" /></div>
+          <span>Scroll to explore</span>
+        </div>
+      </div>
+      <div className="hRight">
+        <HeroCanvas />
+        <div className="hFloatCard">
+          <div className="hFC_lbl">Tonight's Feature</div>
+          <div className="hFC_dish">{DISHES[dishIdx]}</div>
+          <div className="hFC_price">From €54 · Tasting Menu</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════
+   MARQUEE
+══════════════════════════════ */
+function Marquee() {
+  const items = ['Farm to Table', 'Michelin ★★', 'Seasonal Menu', 'Open Kitchen', 'Fine Dining', 'Private Events', 'Wine Pairing', "Chef's Tasting"];
+  const all = [...items, ...items];
+  return (
+    <div className="marqueeBar">
+      <div className="mqTrack">
+        {all.map((t, i) => <div key={i} className="mqItem">{t}</div>)}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════
+   ABOUT
+══════════════════════════════ */
+function About() {
+  return (
+    <section id="about">
+      <div className="aboutGrid">
+        <div className="aImgWrap rvL">
+          <AboutCanvas />
+          <div className="aImgCap">The Ember Dining Room · Est. 2019</div>
+          <div className="aBadge"><span className="aBN">2019</span><span className="aBL">Founded</span></div>
+        </div>
+        <div>
+          <div className="aEye rv">Our Philosophy</div>
+          <h2 className="aTitle rv d1">Where every<br /><em>flavour tells a story.</em></h2>
+          <blockquote className="aQuote rv d2">"We cook with what the earth gives us — nothing more, nothing less."</blockquote>
+          <p className="aP rv d3">Ember began as a single question: what if every ingredient on your plate came from within 50 miles of this kitchen? Five years later, that question has become our identity.</p>
+          <p className="aP rv d4">We work with 14 local farms, 3 fishermen, and 2 foragers. Our menu changes every 3 weeks. Our commitment never does.</p>
+          <div className="aPills rv d5">
+            {['Local Sourcing', 'Zero Waste', 'Seasonal Menu', 'Open Kitchen', 'Tasting Menu'].map(t => (
+              <span key={t} className="aPill">{t}</span>
+            ))}
+          </div>
+          <div className="aStats rv d5">
+            {[['14', 'Local Farms'], ['3', 'Fishermen'], ['2', 'Foragers'], ['50mi', 'Radius']].map(([n, l]) => (
+              <div key={l} className="aStat"><div className="aSN">{n}</div><div className="aSL">{l}</div></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════
+   MENU
+══════════════════════════════ */
+function Menu() {
+  const [tab, setTab] = useState('starters');
+  const TABS = [['starters', 'Starters'], ['mains', 'Main Course'], ['desserts', 'Desserts'], ['wine', 'Wine List']];
+
+  const DISHES = {
+    starters: [
+      { name: 'Oyster & Sea Foam', price: '€28', desc: 'Kumamoto oyster, champagne foam, cucumber water, micro herbs', tags: ['Signature', 'GF'], type: 'oyster' },
+      { name: 'Black Truffle Velouté', price: '€34', desc: 'Périgord truffle, celeriac velouté, hazelnut oil, shaved truffle', tags: ['Seasonal', 'V'], type: 'soup' },
+      { name: 'Wagyu Tartare', price: '€42', desc: 'A5 Wagyu, egg yolk confit, capers, cornichon, bone marrow toast', tags: ["Chef's Pick"], type: 'tartare' },
+      { name: 'Seared Scallop', price: '€36', desc: 'Hand-dived scallop, cauliflower purée, caviar, lemon butter', tags: ['GF', 'New'], type: 'oyster' },
+    ],
+    mains: [
+      { name: 'Herb-Crusted Lamb', price: '€58', desc: 'Rack of lamb, mint jus, asparagus, truffle pommes, rosemary crumble', tags: ['Signature'], type: 'steak' },
+      { name: 'Côte de Bœuf', price: '€72', desc: 'Dry-aged 45 days, béarnaise, bone marrow, truffle frites', tags: ['For Two'], type: 'steak' },
+      { name: 'Breton Lobster', price: '€85', desc: 'Whole lobster, bisque beurre blanc, garden vegetables, herbs', tags: ['GF', 'Market Price'], type: 'lobster' },
+      { name: 'Celeriac en Croûte', price: '€48', desc: 'Whole roasted celeriac, mushroom duxelles, truffle jus, hazelnut', tags: ['V', 'VE'], type: 'veggie' },
+    ],
+    desserts: [
+      { name: 'Valrhona Noir', price: '€22', desc: '75% dark chocolate délice, salted caramel, gold leaf, sorbet', tags: ['Signature', 'GF'], type: 'choc' },
+      { name: 'Apple Tarte Tatin', price: '€19', desc: 'Caramelised apple, feuilleté pastry, Calvados cream, vanilla', tags: ['Classic'], type: 'tart' },
+      { name: 'Cheese Selection', price: '€28', desc: '5 artisan cheeses, quince, walnut bread, honey, grapes', tags: ['V', 'GF'], type: 'veggie' },
+      { name: 'Seasonal Sorbet', price: '€14', desc: 'House-made sorbets, seasonal fruits, champagne jelly, tuile', tags: ['V', 'VE', 'GF'], type: 'tart' },
+    ],
+  };
+
+  return (
+    <section id="menu">
+      <div className="secHead">
+        <div className="secEye rv">The Menu</div>
+        <h2 className="secTitle rv d1">Curated for the<br /><em>Discerning Palate</em></h2>
+        <p className="secSub rv d2">Our tasting menu changes with the seasons. Each dish is a love letter to the land.</p>
+      </div>
+      <div className="menuTabs rv d3">
+        {TABS.map(([id, lbl]) => (
+          <button key={id} className={`mTab ${tab === id ? 'on' : ''}`} onClick={() => setTab(id)}>{lbl}</button>
+        ))}
+      </div>
+
+      {tab !== 'wine' ? (
+        <div className="dishGrid tabPane on">
+          {(DISHES[tab] || DISHES.starters).map((d, i) => (
+            <div key={i} className="dishCard rv" style={{ transitionDelay: i * .07 + 's' }}>
+              <div className="dishImg" style={{ height: 200 }}><DishCanvas type={d.type} /></div>
+              <div className="dishBody">
+                <div className="dishTop">
+                  <h3 className="dishName">{d.name}</h3>
+                  <span className="dishPrice">{d.price}</span>
+                </div>
+                <p className="dishDesc">{d.desc}</p>
+                <div className="dishFoot">{d.tags.map(t => <span key={t} className="dTag">{t}</span>)}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="wineGrid tabPane on">
+          {[
+            ['White Wines', [['Puligny-Montrachet 1er Cru', 'Burgundy · 2019', '€145'], ['Chablis Grand Cru Valmur', 'Chablis · 2020', '€98'], ['Sancerre Blanc', 'Loire · 2021', '€72']]],
+            ['Red Wines', [['Château Margaux', 'Bordeaux · 2015', '€340'], ['Gevrey-Chambertin', 'Burgundy · 2018', '€165'], ['Côte-Rôtie La Landonne', 'Rhône · 2017', '€210']]],
+            ['Champagne', [['Dom Pérignon Vintage', 'Épernay · 2013', '€290'], ['Krug Grande Cuvée', 'Reims · NV', '€195'], ['Billecart-Salmon', 'Mareuil · 2014', '€125']]],
+          ].map(([cat, wines]) => (
+            <div key={cat} className="wineCol rv">
+              <div className="wineCat">{cat}</div>
+              {wines.map(([n, r, p], i) => (
+                <div key={i} className="wineRow">
+                  <span className="wN">{n}</span>
+                  <span className="wP">{p}</span>
+                  <span className="wR">{r}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ══════════════════════════════
+   SPECIALS
+══════════════════════════════ */
+function Specials() {
+  const SPECIALS = [
+    { tag: 'Weekday', name: 'Lunch Set Menu', desc: '2 courses + glass of wine', price: '€38' },
+    { tag: 'Weekend', name: 'Sunday Brunch', desc: 'Extended brunch with live music', price: '€55' },
+    { tag: 'Exclusive', name: "Chef's Table", desc: 'Private 12-course, max 6 guests', price: '€180' },
+    { tag: 'Pairing', name: 'Wine & Dine', desc: '5 courses with sommelier wines', price: '€125' },
+  ];
+  return (
+    <div className="specialsBar">
+      <div className="spGrid">
+        {SPECIALS.map((s, i) => (
+          <div key={i} className="spItem rv" style={{ transitionDelay: i * .1 + 's' }}>
+            <div className="spTag">{s.tag}</div>
+            <div className="spName">{s.name}</div>
+            <div className="spDesc">{s.desc}</div>
+            <div className="spPrice">{s.price}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════
+   GALLERY
+══════════════════════════════ */
+function Gallery() {
+  const cells = [
+    { type: 'int1', lbl: 'The Dining Room', cls: 'gSpan4 gR2' },
+    { type: 'plate', lbl: 'Herb-Crusted Lamb', cls: 'gSpan4' },
+    { type: 'herb', lbl: 'Garden Herbs', cls: 'gSpan4' },
+    { type: 'kitchen', lbl: 'Open Kitchen', cls: 'gSpan5' },
+    { type: 'dessert', lbl: 'Valrhona Noir', cls: 'gSpan3' },
+    { type: 'int2', lbl: 'Private Dining', cls: 'gSpan4' },
+  ];
+  return (
+    <section id="gallery">
+      <div className="secHead">
+        <div className="secEye rv">Visual Story</div>
+        <h2 className="secTitle rv d1">The <em>Atmosphere</em></h2>
+      </div>
+      <div className="galGrid">
+        {cells.map((c, i) => (
+          <div key={i} className={`galCell ${c.cls} rv`} style={{ transitionDelay: i * .07 + 's' }}>
+            <GalCanvas type={c.type} />
+            <div className="galOver"><span className="galLbl">{c.lbl}</span></div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════
+   CHEF
+══════════════════════════════ */
+function Chef() {
+  return (
+    <section id="chef">
+      <div className="chefGrid">
+        <div className="chImgWrap rvL">
+          <ChefCanvas />
+          <div className="chFrame" />
+        </div>
+        <div>
+          <div className="chEye rv">The Craft</div>
+          <div className="chName rv d1">Chef<em>Élodie Marceau</em></div>
+          <div className="chLine rv d2" />
+          <p className="chP rv d3">Trained under Alain Ducasse at Plaza Athénée, Chef Marceau spent a decade at the forefront of French haute cuisine before opening Ember at thirty-two.</p>
+          <p className="chP rv d4">Her philosophy is radical simplicity — three ingredients, perfectly understood, executed with flawless precision. Restraint is the highest form of culinary art.</p>
+          <div className="chAwards rv d5">
+            {[
+              ['Michelin ★★', 'Two Stars · 2022'],
+              ["World's 50 Best", '#14 · 2023'],
+              ['James Beard Award', 'Best Chef Europe · 2022'],
+            ].map(([title, sub]) => (
+              <div key={title} className="chAward">
+                <div className="chADot" />
+                <div>
+                  <div className="chATitle">{title}</div>
+                  <div className="chASub">{sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <a href="#reserve" className="bFill rv d5" style={{ marginTop: 32, display: 'inline-flex' }} onClick={e => { e.preventDefault(); document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' }); }}>
+            <span>Experience Her Menu</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════
+   RESERVATIONS
+══════════════════════════════ */
+function Reservations() {
+  const [guests, setGuests] = useState(2);
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [bookingDetail, setBookingDetail] = useState('');
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const inp = formRef.current?.querySelector('[name="date"]');
+    if (inp) inp.min = tomorrow.toISOString().split('T')[0];
+  }, []);
+
+  const validateField = inp => {
+    if (!inp.required && inp.type !== 'email') return true;
+    const ok = inp.value.trim() !== '' && inp.checkValidity();
+    const field = inp.closest('.rfF');
+    if (field) {
+      field.classList.toggle('hasErr', !ok);
+      inp.classList.toggle('err', !ok);
+    }
+    return ok;
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const form = formRef.current;
+    let allOk = true;
+    form.querySelectorAll('.rfInp[required]').forEach(inp => {
+      if (!validateField(inp)) allOk = false;
+    });
+    if (!allOk) return;
+    setLoading(true);
+    const fd = new FormData(form);
+    const d = new Date(fd.get('date'));
+    const ds = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    setBookingDetail(`${fd.get('fname')} ${fd.get('lname')} · ${guests} guest${guests > 1 ? 's' : ''} · ${ds} at ${fd.get('time')}`);
+    setTimeout(() => { setLoading(false); setSent(true); }, 1800);
+  };
+
+  const HOURS = [
+    ['Tuesday – Thursday', '6:00pm – 10:00pm'],
+    ['Friday – Saturday', '6:00pm – 11:00pm'],
+    ['Sunday', '5:00pm – 9:30pm'],
+    ['Monday', 'Closed'],
+  ];
+
+  return (
+    <section id="reserve">
+      <div className="resGrid">
+        {/* Info column */}
+        <div className="reInfo">
+          <div className="rEye rv">Reservations</div>
+          <h2 className="rTitle rv d1">Your Table<br /><em>Awaits</em></h2>
+          <p className="rSub rv d2">We accept reservations up to 60 days in advance. For parties of 6 or more, please call us directly.</p>
+          <div className="hoursList rv d3">
+            {HOURS.map(([day, time]) => (
+              <div key={day} className="hRow">
+                <span className="hDay">{day}</span>
+                <span className="hTime">{time}</span>
+              </div>
+            ))}
+          </div>
+          <div className="rContacts rv d4">
+            {[['☎', '+33 1 40 20 08 00', 'tel:+33140200800'], ['✉', 'reserve@ember-paris.com', 'mailto:reserve@ember-paris.com']].map(([ico, txt, href]) => (
+              <a key={txt} href={href} className="rContact">
+                <span className="rCIco">{ico}</span>
+                <span>{txt}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Form column */}
+        <div className="reFormWrap rv d2">
+          {!sent ? (
+            <div className="reForm">
+              <div className="rfHead">
+                <div>
+                  <div className="rfTitle">Make a Reservation</div>
+                  <div className="rfSubTxt" style={{ marginTop: 4 }}>Confirmation within 2 hours</div>
+                </div>
+              </div>
+              <form className="rfBody" ref={formRef} onSubmit={handleSubmit} noValidate>
+                <div className="rfRow">
+                  <div className="rfF">
+                    <label className="rfLbl">First Name</label>
+                    <input className="rfInp" name="fname" placeholder="Élodie" required onBlur={e => validateField(e.target)} />
+                    <span className="rfErrMsg">Required</span>
+                  </div>
+                  <div className="rfF">
+                    <label className="rfLbl">Last Name</label>
+                    <input className="rfInp" name="lname" placeholder="Marceau" required onBlur={e => validateField(e.target)} />
+                    <span className="rfErrMsg">Required</span>
+                  </div>
+                </div>
+                <div className="rfRow">
+                  <div className="rfF">
+                    <label className="rfLbl">Email</label>
+                    <input className="rfInp" name="email" type="email" placeholder="your@email.com" required onBlur={e => validateField(e.target)} />
+                    <span className="rfErrMsg">Valid email required</span>
+                  </div>
+                  <div className="rfF">
+                    <label className="rfLbl">Phone</label>
+                    <input className="rfInp" name="phone" placeholder="+33 6 00 00 00 00" />
+                  </div>
+                </div>
+                <div className="rfRow">
+                  <div className="rfF">
+                    <label className="rfLbl">Date</label>
+                    <input className="rfInp" name="date" type="date" required onBlur={e => validateField(e.target)} />
+                    <span className="rfErrMsg">Select a date</span>
+                  </div>
+                  <div className="rfF">
+                    <label className="rfLbl">Time</label>
+                    <select className="rfInp rfSelect" name="time" required onBlur={e => validateField(e.target)}>
+                      <option value="">Select time</option>
+                      {['18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'].map(t => (
+                        <option key={t} value={t}>{t.replace(':', 'h')}</option>
+                      ))}
+                    </select>
+                    <span className="rfErrMsg">Select a time</span>
+                  </div>
+                </div>
+                <div className="rfF">
+                  <label className="rfLbl">Number of Guests</label>
+                  <div className="gcWrap">
+                    <button type="button" className="gcBtn" onClick={() => setGuests(g => Math.max(1, g - 1))}>−</button>
+                    <span className="gcVal">{guests}</span>
+                    <button type="button" className="gcBtn" onClick={() => setGuests(g => Math.min(12, g + 1))}>+</button>
+                  </div>
+                </div>
+                <div className="rfF">
+                  <label className="rfLbl">Special Requests</label>
+                  <textarea className="rfInp rfTA" name="requests" placeholder="Allergies, anniversaries, dietary requirements…" />
+                </div>
+                <button type="submit" className="rfSubmit" disabled={loading}>
+                  {loading ? 'Confirming your table…' : 'Confirm Reservation →'}
+                </button>
+                <p className="rfNote">24-hour cancellation policy applies.</p>
+              </form>
+            </div>
+          ) : (
+            <div className="rfSuccess show">
+              <div className="rfSIco">✓</div>
+              <div className="rfSTitle">Reservation Received</div>
+              <p className="rfSP">Thank you. We will confirm your table within 2 hours. A confirmation will be sent to your email.</p>
+              <div className="rfSDetail">{bookingDetail}</div>
+              <button className="bFill" onClick={() => setSent(false)}><span>Make Another Reservation</span></button>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════
+   REVIEWS CAROUSEL
+══════════════════════════════ */
+function Reviews() {
+  const [cur, setCur] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const startX = useRef(0);
+
+  const REVIEWS = [
+    { stars: '★★★★★', text: '"An evening that transcended dining. The herb-crusted lamb was the finest thing I have ever eaten. The silence of the room, the precision of service — Ember is flawless."', name: 'Guillaume Dupont', role: 'Food Critic · Le Monde', av: 'GD' },
+    { stars: '★★★★★', text: '"Chef Marceau\'s tasting menu is a masterpiece of restraint. Every course arrives like a revelation. We celebrated our anniversary here and will never forget it."', name: 'Sophie & Charles', role: 'Regular Guests · London', av: 'SC' },
+    { stars: '★★★★★', text: '"I have dined at most of the world\'s great restaurants. Ember is something different — intimate, precise, deeply moving. Two Michelin stars are overdue recognition."', name: 'Rafael Vidal', role: 'Chef · Michelin ★★★ Madrid', av: 'RV' },
+    { stars: '★★★★★', text: '"The wine pairing alone was worth the trip to Paris. Our sommelier guided us through each course with extraordinary knowledge. An unmissable experience."', name: 'Aisha Kamara', role: 'Travel Writer · Condé Nast', av: 'AK' },
+  ];
+
+  const total = REVIEWS.length;
+  const go = i => setCur(Math.max(0, Math.min(i, total - 1)));
+  const perView = typeof window !== 'undefined' && window.innerWidth <= 700 ? 1 : 3;
+
+  useEffect(() => {
+    const t = setInterval(() => setCur(p => (p + 1) % total), 5000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <section id="reviews">
+      <div className="secHead">
+        <div className="secEye rv">Guest Experiences</div>
+        <h2 className="secTitle rv d1">What They <em>Say</em></h2>
+      </div>
+      <div
+        className={`revTrack ${dragging ? 'grabbing' : ''}`}
+        style={{ transform: `translateX(calc(-${cur * (100 / perView)}% - ${cur * 20 / perView}px))` }}
+        onPointerDown={e => { setDragging(true); startX.current = e.clientX; }}
+        onPointerUp={e => { setDragging(false); const d = startX.current - e.clientX; if (Math.abs(d) > 50) d > 0 ? go(cur + 1) : go(cur - 1); }}
+      >
+        {REVIEWS.map((r, i) => (
+          <div key={i} className="revCard">
+            <div className="revStars">{r.stars}</div>
+            <p className="revText">{r.text}</p>
+            <div className="revAuthor">
+              <div className="revAv">{r.av}</div>
+              <div>
+                <div className="revName">{r.name}</div>
+                <div className="revRole">{r.role}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="revCtrl">
+        <button className="revBtn" onClick={() => go(cur - 1)}>←</button>
+        <div className="revDots">
+          {REVIEWS.map((_, i) => <div key={i} className={`revDot ${i === cur ? 'on' : ''}`} onClick={() => go(i)} />)}
+        </div>
+        <button className="revBtn" onClick={() => go(cur + 1)}>→</button>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+function Footer() {
+  const go = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  return (
+    <footer id="footer">
+      <div className="ftTop">
+        <div>
+          <div className="ftLogo"><em>E</em>mber</div>
+          <div className="ftTag">Where every flavour tells a story.</div>
+          <div className="ftSocs">
+            {['⊕', '⊞', '⊗'].map((s, i) => <a key={i} href="#" className="ftSoc">{s}</a>)}
+          </div>
+        </div>
+        <div>
+          <div className="ftCT">Navigate</div>
+          {[['about', 'Our Story'], ['menu', 'The Menu'], ['chef', 'The Chef'], ['gallery', 'Gallery'], ['reserve', 'Reserve']].map(([id, lbl]) => (
+            <a key={id} href={'#' + id} className="ftLnk" onClick={e => { e.preventDefault(); go(id); }}>{lbl}</a>
+          ))}
+        </div>
+        <div>
+          <div className="ftCT">Visit</div>
+          <p className="ftTxt">14 Rue du Marché<br />75004 Paris, France</p>
+          <p className="ftTxt" style={{ marginTop: 12 }}>Tue–Sun · 6pm–11pm<br />Monday Closed</p>
+        </div>
+        <div>
+          <div className="ftCT">Contact</div>
+          {['+33 1 40 20 08 00', 'reserve@ember-paris.com', 'press@ember-paris.com'].map(c => (
+            <a key={c} href={c.includes('@') ? `mailto:${c}` : `tel:${c.replace(/\s/g, '')}`} className="ftLnk">{c}</a>
+          ))}
+        </div>
+      </div>
+      <div className="ftMap">
+        <MapCanvas />
+        <div className="mapPinWrap">
+          <div className="mapPinDot" />
+          <div className="mapPinLbl">14 Rue du Marché · Paris</div>
+        </div>
+      </div>
+      <div className="ftBot">
+        <span>© 2024 Ember · All rights reserved</span>
+        <div className="ftLeg">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ══════════════════════════════
+   CURSOR ENGINE
+══════════════════════════════ */
+function initCursor() {
+  const dot = document.getElementById('cD');
+  const ring = document.getElementById('cR');
+  if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  let cx = 0, cy = 0, rx = 0, ry = 0, active = false;
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    dot.style.left = cx + 'px'; dot.style.top = cy + 'px';
+    if (!active) { active = true; document.body.classList.add('cA'); }
+  }, { passive: true });
+  (function loop() {
+    rx += (cx - rx) * .1; ry += (cy - ry) * .1;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+  document.addEventListener('mousedown', () => dot.style.transform = 'translate(-50%,-50%) scale(.35)');
+  document.addEventListener('mouseup', () => dot.style.transform = 'translate(-50%,-50%) scale(1)');
+  const attach = () => {
+    const done = '_ec';
+    document.querySelectorAll('a,button,.dishCard,.galCell,.revCard,.hStat,.spItem').forEach(el => {
+      if (el[done]) return; el[done] = true;
+      el.addEventListener('mouseenter', () => document.body.classList.add('cH'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cH'));
+    });
+  };
+  attach(); setInterval(attach, 2000);
+}
+
+/* ══════════════════════════════
+   SCROLL REVEAL ENGINE
+══════════════════════════════ */
+function initReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); }
+    });
+  }, { threshold: .1, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.rv,.rvL,.rvR,.rvS').forEach(el => obs.observe(el));
+}
+
+/* ══════════════════════════════
+   APP ROOT
+══════════════════════════════ */
+function App() {
+  useEffect(() => {
+    initCursor();
+    setTimeout(initReveal, 100);
+    // Periodic re-observe for dynamically rendered elements
+    setInterval(() => {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+      }, { threshold: .1 });
+      document.querySelectorAll('.rv:not(.on),.rvL:not(.on),.rvR:not(.on),.rvS:not(.on)').forEach(el => obs.observe(el));
+    }, 800);
+  }, []);
+
+  return (<>
+    <Nav />
+    <Hero />
+    <Marquee />
+    <About />
+    <Menu />
+    <Specials />
+    <Gallery />
+    <Chef />
+    <Reservations />
+    <Reviews />
+    <Footer />
+  </>);
+}
+
+window.addEventListener('load', () => {
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+});
+</script>
+</body>
+</html>
