@@ -1092,10 +1092,10 @@ function Menu() {
 
   const DISHES = {
     starters: [
-      { name: 'Oyster & Sea Foam', price: '€28', desc: 'Kumamoto oyster, champagne foam, cucumber water, micro herbs', tags: ['Signature', 'GF'], type: 'oyster' },
-      { name: 'Black Truffle Velouté', price: '€34', desc: 'Périgord truffle, celeriac velouté, hazelnut oil, shaved truffle', tags: ['Seasonal', 'V'], type: 'soup' },
-      { name: 'Wagyu Tartare', price: '€42', desc: 'A5 Wagyu, egg yolk confit, capers, cornichon, bone marrow toast', tags: ["Chef's Pick"], type: 'tartare' },
-      { name: 'Seared Scallop', price: '€36', desc: 'Hand-dived scallop, cauliflower purée, caviar, lemon butter', tags: ['GF', 'New'], type: 'oyster' },
+      { name: 'Oyster & Sea Foam', price: '€28', desc: 'Kumamoto oyster, champagne foam, cucumber water, micro herbs', tags: ['Signature', 'GF'], type: 'oyster', img: 'https://caviarspherika.com/cdn/shop/articles/Spherika-caviar-esturion-ostras-espuma_16x9_5ecd563d-31a8-4f49-9943-5ec87edc8623.jpg?v=1764665370' },
+      { name: 'Black Truffle Velouté', price: '€34', desc: 'Périgord truffle, celeriac velouté, hazelnut oil, shaved truffle', tags: ['Seasonal', 'V'], type: 'soup', img: 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/celeriac-soup-2e8bf4e.jpg?quality=90&resize=440,400' },
+      { name: 'Wagyu Tartare', price: '€42', desc: 'A5 Wagyu, egg yolk confit, capers, cornichon, bone marrow toast', tags: ["Chef's Pick"], type: 'tartare', img: 'https://thetopmeal.com/wp-content/uploads/2024/02/wagyu-tartare-9.jpg' },
+      { name: 'Seared Scallop', price: '€36', desc: 'Hand-dived scallop, cauliflower purée, caviar, lemon butter', tags: ['GF', 'New'], type: 'oyster', img: 'https://www.sprinklesandsprouts.com/wp-content/uploads/2019/02/Seared-Scallops-Cauliflower-puree-SQ.jpg' },
     ],
     mains: [
       { name: 'Herb-Crusted Lamb', price: '€58', desc: 'Rack of lamb, mint jus, asparagus, truffle pommes, rosemary crumble', tags: ['Signature'], type: 'steak' },
@@ -1128,7 +1128,12 @@ function Menu() {
         <div className="dishGrid tabPane on">
           {(DISHES[tab] || DISHES.starters).map((d, i) => (
             <div key={i} className="dishCard rv" style={{ transitionDelay: i * .07 + 's' }}>
-              <div className="dishImg" style={{ height: 200 }}><DishCanvas type={d.type} /></div>
+              <div className="dishImg" style={{ height: 200 }}>
+                {d.img
+                  ? <img src={d.img} alt={d.name} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>
+                  : <DishCanvas type={d.type} />
+                }
+              </div>
               <div className="dishBody">
                 <div className="dishTop">
                   <h3 className="dishName">{d.name}</h3>
