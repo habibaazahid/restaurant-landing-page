@@ -338,9 +338,9 @@ body.cH #cD{background:var(--acc2)}
    08 · REVIEWS
 ══════════════════════════════ */
 #reviews{padding:120px 64px;background:var(--bg2);overflow:hidden}
-.revTrack{display:flex;gap:20px;overflow:hidden;transition:transform .55s var(--sp);cursor:grab}
-.revTrack.grabbing{cursor:grabbing}
-.revCard{background:var(--white);border:1px solid var(--border);padding:32px 28px;min-width:calc(33.33% - 14px);flex-shrink:0;transition:box-shadow .3s,border-color .3s}
+.revWrap{overflow:hidden;width:100%}
+.revTrack{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;transition:transform .55s var(--sp);will-change:transform}
+.revCard{background:var(--white);border:1px solid var(--border);padding:32px 28px;transition:box-shadow .3s,border-color .3s;min-width:0}
 .revCard:hover{box-shadow:0 8px 32px rgba(31,26,20,.08);border-color:var(--brd2)}
 .revStars{color:var(--accent);letter-spacing:3px;font-size:.88rem;margin-bottom:15px}
 .revText{font-family:var(--fh);font-size:.98rem;font-style:italic;font-weight:400;color:var(--stone);line-height:1.82;margin-bottom:22px}
@@ -348,13 +348,15 @@ body.cH #cD{background:var(--acc2)}
 .revAv{width:42px;height:42px;border-radius:50%;background:rgba(200,68,10,.12);border:1px solid rgba(200,68,10,.25);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:.78rem;font-weight:700;color:var(--accent);flex-shrink:0}
 .revName{font-family:var(--fb);font-size:.9rem;font-weight:600;color:var(--dark2);margin-bottom:2px}
 .revRole{font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--stone2)}
-.revCtrl{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:32px}
-.revBtn{width:42px;height:42px;border:1px solid var(--brd2);background:var(--white);cursor:pointer;color:var(--stone);font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .22s}
+.revCtrl{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:40px}
+.revBtn{width:44px;height:44px;border:1px solid var(--brd2);background:var(--white);cursor:pointer;color:var(--stone);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .22s;border-radius:0;flex-shrink:0}
 .revBtn:hover{border-color:var(--accent);color:var(--accent);background:rgba(200,68,10,.05)}
 .revDots{display:flex;gap:8px}
 .revDot{width:7px;height:7px;border-radius:50%;background:var(--brd2);cursor:pointer;transition:all .28s}
 .revDot.on{background:var(--accent);width:20px;border-radius:4px}
-@media(max-width:900px){#reviews{padding:80px 28px}.revCard{min-width:100%}}
+@media(max-width:900px){#reviews{padding:80px 28px}}
+@media(max-width:1000px){.revTrack{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.revTrack{grid-template-columns:1fr}}
 
 /* ══════════════════════════════
    09 · FOOTER
@@ -1438,10 +1440,6 @@ function Reservations() {
    REVIEWS CAROUSEL
 ══════════════════════════════ */
 function Reviews() {
-  const [cur, setCur] = useState(0);
-  const [dragging, setDragging] = useState(false);
-  const startX = useRef(0);
-
   const REVIEWS = [
     { stars: '★★★★★', text: '"An evening that transcended dining. The herb-crusted lamb was the finest thing I have ever eaten. The silence of the room, the precision of service — Ember is flawless."', name: 'Guillaume Dupont', role: 'Food Critic · Le Monde', av: 'GD' },
     { stars: '★★★★★', text: '"Chef Marceau\'s tasting menu is a masterpiece of restraint. Every course arrives like a revelation. We celebrated our anniversary here and will never forget it."', name: 'Sophie & Charles', role: 'Regular Guests · London', av: 'SC' },
@@ -1449,55 +1447,32 @@ function Reviews() {
     { stars: '★★★★★', text: '"The wine pairing alone was worth the trip to Paris. Our sommelier guided us through each course with extraordinary knowledge. An unmissable experience."', name: 'Aisha Kamara', role: 'Travel Writer · Condé Nast', av: 'AK' },
   ];
 
-  const total = REVIEWS.length;
-  const go = i => setCur(Math.max(0, Math.min(i, total - 1)));
-  const perView = typeof window !== 'undefined' && window.innerWidth <= 700 ? 1 : 3;
-
-  useEffect(() => {
-    const t = setInterval(() => setCur(p => (p + 1) % total), 5000);
-    return () => clearInterval(t);
-  }, []);
-
   return (
     <section id="reviews">
       <div className="secHead">
         <div className="secEye rv">Guest Experiences</div>
         <h2 className="secTitle rv d1">What They <em>Say</em></h2>
       </div>
-      <div
-        className={`revTrack ${dragging ? 'grabbing' : ''}`}
-        style={{ transform: `translateX(calc(-${cur * (100 / perView)}% - ${cur * 20 / perView}px))` }}
-        onPointerDown={e => { setDragging(true); startX.current = e.clientX; }}
-        onPointerUp={e => { setDragging(false); const d = startX.current - e.clientX; if (Math.abs(d) > 50) d > 0 ? go(cur + 1) : go(cur - 1); }}
-      >
-        {REVIEWS.map((r, i) => (
-          <div key={i} className="revCard">
-            <div className="revStars">{r.stars}</div>
-            <p className="revText">{r.text}</p>
-            <div className="revAuthor">
-              <div className="revAv">{r.av}</div>
-              <div>
-                <div className="revName">{r.name}</div>
-                <div className="revRole">{r.role}</div>
+      <div className="revWrap">
+        <div className="revTrack">
+          {REVIEWS.map((r, i) => (
+            <div key={i} className="revCard rv" style={{transitionDelay: i * .08 + 's'}}>
+              <div className="revStars">{r.stars}</div>
+              <p className="revText">{r.text}</p>
+              <div className="revAuthor">
+                <div className="revAv">{r.av}</div>
+                <div>
+                  <div className="revName">{r.name}</div>
+                  <div className="revRole">{r.role}</div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-      <div className="revCtrl">
-        <button className="revBtn" onClick={() => go(cur - 1)}>←</button>
-        <div className="revDots">
-          {REVIEWS.map((_, i) => <div key={i} className={`revDot ${i === cur ? 'on' : ''}`} onClick={() => go(i)} />)}
+          ))}
         </div>
-        <button className="revBtn" onClick={() => go(cur + 1)}>→</button>
       </div>
     </section>
   );
 }
-
-/* ══════════════════════════════
-   FOOTER
-══════════════════════════════ */
 function Footer() {
   const go = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   return (
