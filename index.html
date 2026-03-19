@@ -1200,12 +1200,12 @@ function Specials() {
 ══════════════════════════════ */
 function Gallery() {
   const cells = [
-    { type: 'int1', lbl: 'The Dining Room', cls: 'gSpan4 gR2' },
-    { type: 'plate', lbl: 'Herb-Crusted Lamb', cls: 'gSpan4' },
-    { type: 'herb', lbl: 'Garden Herbs', cls: 'gSpan4' },
-    { type: 'kitchen', lbl: 'Open Kitchen', cls: 'gSpan5' },
-    { type: 'dessert', lbl: 'Valrhona Noir', cls: 'gSpan3' },
-    { type: 'int2', lbl: 'Private Dining', cls: 'gSpan4' },
+    { lbl: 'The Dining Room',    cls: 'gSpan4 gR2', img: 'https://i.pinimg.com/736x/4f/b7/55/4fb755dc01a1bd0daf4e610a7c9ba310.jpg' },
+    { lbl: 'Herb-Crusted Lamb',  cls: 'gSpan4',     img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4XYNK6D6miAoc3OMxXtPceOlYUY6NmAyusg&s' },
+    { lbl: 'Garden Herbs',       cls: 'gSpan4',     img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2ipie0X5ac3K7zhMqi3-jgnsIn9p35LO36g&s' },
+    { lbl: 'Open Kitchen',       cls: 'gSpan5',     img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6Bd1ib4tkhWnrL0uC-_Xpsqb7oAUIw3GVfg&s' },
+    { lbl: 'Valrhona Noir',      cls: 'gSpan3',     img: 'https://images.pexels.com/photos/29978684/pexels-photo-29978684/free-photo-of-decadent-chocolate-dessert-with-vanilla-ice-cream.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' },
+    { lbl: 'Private Dining',     cls: 'gSpan4',     type: 'int2' },
   ];
   return (
     <section id="gallery">
@@ -1216,7 +1216,10 @@ function Gallery() {
       <div className="galGrid">
         {cells.map((c, i) => (
           <div key={i} className={`galCell ${c.cls} rv`} style={{ transitionDelay: i * .07 + 's' }}>
-            <GalCanvas type={c.type} />
+            {c.img
+              ? <img src={c.img} alt={c.lbl} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>
+              : <GalCanvas type={c.type} />
+            }
             <div className="galOver"><span className="galLbl">{c.lbl}</span></div>
           </div>
         ))}
